@@ -497,11 +497,6 @@ describe the environment variables on the slave. In situations where the
 environment is not relevant and is long, it may be easier to set
 logEnviron=False.
 
-@item env
-a dictionary of environment strings which will be added to the child
-command's environment.
-
-
 @end table
 
 Use of @ref{WithProperties} with string, dict and callable is supported.
@@ -510,6 +505,7 @@ Use of @ref{WithProperties} with string, dict and callable is supported.
 * Mercurial::
 * Git::
 * SVN::
+* CVS::
 @end menu
 
 @node Mercurial
@@ -559,8 +555,10 @@ or the branch is a mercurial named branch and can be
 found within the @code{repourl}.
 
 @item clobberOnBranchChange
-boolean, defaults to True. If set and using inrepos branches, clobber the tree
-at each branch change. Otherwise, just update to the branch.
+boolean, defaults to True. If set and
+using inrepos branches, clobber the tree
+at each branch change. Otherwise, just
+update to the branch.
 
 @item mode
 @item method
@@ -875,6 +873,38 @@ name) to get the correct svn command. If the ``newthing'' branch has a change
 to ``src/foo.c'', then the SVN step will concatenate
 ``svn://svn.example.org/MyProject/'' with ``features/newthing'' to get the
 svnurl for checkout.
+
+@node CVS
+@subsubsection CVS
+@cindex CVS Checkout
+@bsindex buildbot.steps.source.cvs.CVS
+
+The @code{CVS} build step performs a @uref{http://www.nongnu.org/cvs/,
+CVS} checkout or update. It takes the following arguments:
+
+@table @code
+@item cvsroot
+(required): specify the CVSROOT value, which points to a CVS
+repository, probably on a remote machine. For example, the cvsroot
+value you would use to get a copy of the Buildbot source code is
+@code{:pserver:anonymous@@cvs.sourceforge.net:/cvsroot/buildbot}
+
+@item cvsmodule
+(required): specify the cvs @code{module}, which is generally a
+subdirectory of the CVSROOT. The cvsmodule for the Buildbot source
+code is @code{buildbot}.
+
+@item branch
+a string which will be used in a @code{-r} argument. This is most
+useful for specifying a branch to work on. Defaults to @code{HEAD}.
+
+@item global_options
+a list of flags to be put before @code{checkout} in the CVS command.
+
+@item extra_options
+a list of flags to be put after @code{checkout} in the CVS command.
+
+@end table
 
 @node Source Checkout (Old)
 @subsection Source Checkout (Old)
