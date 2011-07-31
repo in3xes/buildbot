@@ -39,7 +39,7 @@ def with_master_objectid(fn):
     def wrap(self, *args, **kwargs):
         d = self.db.master.getObjectId()
         d.addCallback(lambda master_objectid :
-                fn(self, *args, _master_objectid=master_objectid, **kwargs))
+                fn(self, _master_objectid=master_objectid, *args, **kwargs))
         return d
     wrap.__name__ = fn.__name__
     wrap.__doc__ = fn.__doc__
@@ -192,7 +192,7 @@ class BuildRequestsConnectorComponent(base.DBConnectorComponent):
                 conn.execute(q, [ dict(brid=id, objectid=_master_objectid,
                                     claimed_at=claimed_at)
                                   for id in brids ])
-            except sa.exc.IntegrityError:
+            except (sa.exc.IntegrityError, sa.exc.ProgrammingError):
                 transaction.rollback()
                 raise AlreadyClaimedError
 
