@@ -208,7 +208,6 @@ class CVS(Source):
         d.addCallbacks(self.finished, self.checkDisconnect)
         return d
 
-    # FIX ME
     def checkLogin(self, _):
         if self.login:
             d = defer.succeed(0)
