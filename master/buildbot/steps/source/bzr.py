@@ -94,6 +94,7 @@ class Bzr(Source):
             wfd.getResult()
             return
         elif self.method == 'copy':
+            self.workdir = 'source'
             wfd = defer.waitForDeferred(self.copy())
             yield wfd
             wfd.getResult()
@@ -129,12 +130,10 @@ class Bzr(Source):
         return d
 
     def copy(self):
-        cmd = buildstep.LoggedRemoteCommand('rmdir', {'dir': self.workdir,
+        cmd = buildstep.LoggedRemoteCommand('rmdir', {'dir': 'build',
                                                       'logEnviron': self.logEnviron,})
         cmd.useLog(self.stdio_log, False)
         d = self.runCommand(cmd)
-
-        self.workdir = 'source'
         d.addCallback(lambda _: self.incremental())
         def copy(_):
             cmd = buildstep.LoggedRemoteCommand('cpdir',
@@ -145,11 +144,6 @@ class Bzr(Source):
             d = self.runCommand(cmd)
             return d
         d.addCallback(copy)
-        def resetWorkdir(_):
-            self.workdir = 'build'
-            return 0
-
-        d.addCallback(resetWorkdir)
         return d
 
     def clean(self):
