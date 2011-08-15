@@ -182,3 +182,27 @@ class TestBzr(sourcesteps.SourceStepMixin, unittest.TestCase):
             )
         self.expectOutcome(result=SUCCESS, status_text=["update"])
         return self.runStep()
+
+    def test_mode_incremental_no_existing_repo(self):
+        self.setupStep(
+            bzr.Bzr(repourl='http://bzr.squid-cache.org/bzr/squid3/trunk',
+                    mode='incremental'))
+        self.expectCommands(
+            ExpectShell(workdir='wkdir',
+                        command=['bzr', '--version'])
+            + 0,
+            ExpectLogged('stat', dict(file='wkdir/.bzr',
+                                      logEnviron=True))
+            + 1,
+            ExpectShell(workdir='wkdir',
+                        command=['bzr', 'checkout',
+                                'http://bzr.squid-cache.org/bzr/squid3/trunk', '.'])
+            + 0,
+            ExpectShell(workdir='wkdir',
+                        command=['bzr', 'version-info', '--custom', "--template='{revno}"])
+            + ExpectShell.log('stdio',
+                stdout='100')
+            + 0,
+            )
+        self.expectOutcome(result=SUCCESS, status_text=["update"])
+        return self.runStep()
