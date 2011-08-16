@@ -26,8 +26,7 @@ class Bzr(Source):
     renderables = [ 'repourl', 'baseURL' ]
 
     def __init__(self, repourl=None, baseURL=None, mode='incremental',
-                 method=None, defaultBranch=None, forceShareRepo=None,
-                 **kwargs):
+                 method=None, defaultBranch=None, **kwargs):
         
         self.repourl = repourl
         self.baseURL = baseURL
@@ -42,8 +41,19 @@ class Bzr(Source):
                                  defaultBranch=defaultBranch,
                                  forceShareRepo=forceShareRepo,
                                  )
+        if repourl and baseURL:
+            raise ValueError("you must provide exactly one of repourl and"
+                             " baseURL")
+
+        if repourl is None and baseURL is None:
+            raise ValueError("you must privide at least one of repourl and"
+                             " baseURL")
+
+        if self.repourl is None:
+            self.repourl = self.baseURL + defaultBranch
+
         assert self.mode in ['incremental', 'full']
-        assert self.repourl is not None
+
         if self.mode == 'full':
             assert self.method in ['clean', 'fresh', 'clobber', 'copy', None]
 
