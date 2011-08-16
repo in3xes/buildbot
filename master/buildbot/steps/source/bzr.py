@@ -39,7 +39,6 @@ class Bzr(Source):
                                  method=method,
                                  baseURL=baseURL,
                                  defaultBranch=defaultBranch,
-                                 forceShareRepo=forceShareRepo,
                                  )
         if repourl and baseURL:
             raise ValueError("you must provide exactly one of repourl and"
